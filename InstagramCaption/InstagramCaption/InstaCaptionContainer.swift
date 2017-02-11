@@ -72,11 +72,16 @@ class InstaCaptionContainer: UIView {
         addGestureRecognizer(tapGesture)
         tapGesture.delegate = self
         
-        viewState.center = CGPoint(x: bounds.width / 2, y: defaultTextSize.width / 2)
+        var viewState = ViewState()
+        viewState.center = CGPoint(x: bounds.width / 2, y: defaultTextSize.height / 2)
+        updateState(viewState)
         
         // *Debug
-         //textView.backgroundColor = UIColor.red
-         //textViewContainer.backgroundColor = UIColor.blue
+        textView.alpha = 0.8
+        textView.text = "hello world"
+        textView.backgroundColor = UIColor.red
+        textViewContainer.alpha = 0.8
+        textViewContainer.backgroundColor = UIColor.blue
     }
 
     fileprivate func updateState(_ viewState: ViewState) {
@@ -162,7 +167,7 @@ extension InstaCaptionContainer: UITextViewDelegate {
         viewState.center = CGPoint(x: self.bounds.width / 2, y: defaultTextSize.height / 2)
         viewState.transform = CGAffineTransform.identity
         
-        UIView.animate(withDuration: 0.3) { [unowned self] in
+        UIView.animate(withDuration: 0.5) { [unowned self] in
             self.updateState(viewState)
         }
     }
@@ -178,7 +183,7 @@ extension InstaCaptionContainer: UITextViewDelegate {
         viewState.center = self.originalCenterPoint
         viewState.transform = self.originalTransform
         
-        UIView.animate(withDuration: 0.3) { [unowned self] in
+        UIView.animate(withDuration: 0.5) { [unowned self] in
             self.updateState(viewState)
         }
     }

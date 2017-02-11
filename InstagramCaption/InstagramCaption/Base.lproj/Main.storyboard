@@ -21,21 +21,32 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="sample" translatesAutoresizingMaskIntoConstraints="NO" id="naw-gi-OTm">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                            </imageView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EMf-hH-Uw7" customClass="InstaCaptionContainer" customModule="InstagramCaption" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
-                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             </view>
                         </subviews>
                         <constraints>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="EMf-hH-Uw7" secondAttribute="bottom" id="BPB-n2-UIS"/>
+                            <constraint firstItem="naw-gi-OTm" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="Bdp-Yq-Zca"/>
                             <constraint firstItem="EMf-hH-Uw7" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="ZYF-ww-AaD"/>
+                            <constraint firstItem="naw-gi-OTm" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="gcv-Jy-MTC"/>
                             <constraint firstAttribute="trailing" secondItem="EMf-hH-Uw7" secondAttribute="trailing" id="hXc-Rc-kV1"/>
                             <constraint firstItem="EMf-hH-Uw7" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="ngz-bs-CI9"/>
+                            <constraint firstAttribute="trailing" secondItem="naw-gi-OTm" secondAttribute="trailing" id="zB2-Pp-Zwz"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="naw-gi-OTm" secondAttribute="bottom" id="zrB-TQ-SLA"/>
                         </constraints>
                     </view>
+                    <nil key="simulatedStatusBarMetrics"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
         </scene>
     </scenes>
+    <resources>
+        <image name="sample" width="368" height="540"/>
+    </resources>
 </document>
