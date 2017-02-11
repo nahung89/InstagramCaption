@@ -1,4 +1,4 @@
-# InstagramCaption
+# InstagramCaption - Swift 3.0
 
 Demo to add text like Instagram or SnapChat 
 
