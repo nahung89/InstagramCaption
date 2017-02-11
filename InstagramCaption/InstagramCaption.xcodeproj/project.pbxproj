@@ -12,6 +12,8 @@
 		119C3D621E4EED9F0056FBAA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 119C3D601E4EED9F0056FBAA /* Main.storyboard */; };
 		119C3D641E4EED9F0056FBAA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 119C3D631E4EED9F0056FBAA /* Assets.xcassets */; };
 		119C3D671E4EED9F0056FBAA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 119C3D651E4EED9F0056FBAA /* LaunchScreen.storyboard */; };
+		119C3D6F1E4EEFD30056FBAA /* InstaCaptionContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 119C3D6E1E4EEFD30056FBAA /* InstaCaptionContainer.swift */; };
+		119C3D711E4EF4090056FBAA /* InstaTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 119C3D701E4EF4090056FBAA /* InstaTextView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +24,8 @@
 		119C3D631E4EED9F0056FBAA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		119C3D661E4EED9F0056FBAA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		119C3D681E4EED9F0056FBAA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		119C3D6E1E4EEFD30056FBAA /* InstaCaptionContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InstaCaptionContainer.swift; sourceTree = "<group>"; };
+		119C3D701E4EF4090056FBAA /* InstaTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InstaTextView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +60,8 @@
 			children = (
 				119C3D5C1E4EED9F0056FBAA /* AppDelegate.swift */,
 				119C3D5E1E4EED9F0056FBAA /* ViewController.swift */,
+				119C3D6E1E4EEFD30056FBAA /* InstaCaptionContainer.swift */,
+				119C3D701E4EF4090056FBAA /* InstaTextView.swift */,
 				119C3D601E4EED9F0056FBAA /* Main.storyboard */,
 				119C3D631E4EED9F0056FBAA /* Assets.xcassets */,
 				119C3D651E4EED9F0056FBAA /* LaunchScreen.storyboard */,
@@ -138,7 +144,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				119C3D5F1E4EED9F0056FBAA /* ViewController.swift in Sources */,
+				119C3D711E4EF4090056FBAA /* InstaTextView.swift in Sources */,
 				119C3D5D1E4EED9F0056FBAA /* AppDelegate.swift in Sources */,
+				119C3D6F1E4EEFD30056FBAA /* InstaCaptionContainer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
