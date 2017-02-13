@@ -19,9 +19,8 @@ class InstaCaptionContainer: UIView {
     fileprivate var rotateGesture: UIRotationGestureRecognizer!
     fileprivate var tapGesture: UITapGestureRecognizer!
     
-    fileprivate var originalCenterPoint = CGPoint.zero
-    fileprivate var originalTransform = CGAffineTransform.identity
     fileprivate private(set) var viewState =  ViewState()
+    fileprivate var lastViewState = ViewState()
     
     fileprivate let defaultTextSize = CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height / 2)
     
@@ -74,11 +73,12 @@ class InstaCaptionContainer: UIView {
         
         var viewState = ViewState()
         viewState.center = CGPoint(x: bounds.width / 2, y: defaultTextSize.height / 2)
+        lastViewState = viewState
         updateState(viewState)
         
         // *Debug
         textView.alpha = 0.8
-        textView.text = "hello world"
+        textView.text = "Hello world and welcome to another new place in the world. Ha ha ha!"
         textView.backgroundColor = UIColor.red
         textViewContainer.alpha = 0.8
         textViewContainer.backgroundColor = UIColor.blue
@@ -162,8 +162,7 @@ extension InstaCaptionContainer: UITextViewDelegate {
         textView.isScrollEnabled = true
         
         var viewState = self.viewState
-        originalCenterPoint = viewState.center
-        originalTransform = viewState.transform
+        lastViewState = viewState
         viewState.center = CGPoint(x: self.bounds.width / 2, y: defaultTextSize.height / 2)
         viewState.transform = CGAffineTransform.identity
         
@@ -179,12 +178,8 @@ extension InstaCaptionContainer: UITextViewDelegate {
         textView.isScrollEnabled = false
         textView.bounds.size = contentSize
         
-        var viewState = self.viewState
-        viewState.center = self.originalCenterPoint
-        viewState.transform = self.originalTransform
-        
         UIView.animate(withDuration: 0.5) { [unowned self] in
-            self.updateState(viewState)
+            self.updateState(self.lastViewState)
         }
     }
 }
