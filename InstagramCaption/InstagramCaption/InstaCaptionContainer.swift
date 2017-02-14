@@ -102,16 +102,19 @@ class InstaCaptionContainer: UIView {
     func updateTextScale(_ scale: CGFloat) {
         var viewState = self.viewState
         
-        let testA = false
+        let newWidth = textViewContainer.frame.size.width * scale
+        let shouldTransform = newWidth > UIScreen.main.bounds.width * 2.5 || newWidth < UIScreen.main.bounds.width / 2
         
         // 1
-        if testA {
+        if shouldTransform {
             viewState.transform = viewState.transform.scaledBy(x: scale, y: scale)
+            // print("1")
         }
         // 2
         else {
             viewState.size = CGSize(width: viewState.size.width * scale, height: viewState.size.height * scale)
             textView.updateText(withScale: scale)
+            // print("2")
         }
         
         updateState(viewState)
