@@ -12,6 +12,11 @@ import UIKit
 class InstaTextView: UITextView {
     
     private let frameRatio: CGFloat = UIScreen.main.bounds.width / 375
+    fileprivate(set) var viewState = ViewState()
+    
+    struct ViewState {
+        var size = CGSize.zero
+    }
     
     // Make text always aligns in vertical
     // http://stackoverflow.com/a/33425545/2082851
@@ -23,41 +28,65 @@ class InstaTextView: UITextView {
         }
     }
     
+    func getInitState() -> ViewState {
+        return ViewState(size: frame.size)
+    }
+    
     func configurate() {
-        // Shadow
-        let shadow = NSShadow()
-        shadow.shadowColor = UIColor.gray
-        shadow.shadowBlurRadius = 3.0 * frameRatio
-        
-        // Text alignment
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = NSTextAlignment.center
-        
-        // Create properties
-        let typingAttributes: [String: AnyObject] = [NSForegroundColorAttributeName: UIColor.white,
-                                                     NSShadowAttributeName: shadow,
-                                                     NSParagraphStyleAttributeName:paragraphStyle]
-        attributedText = NSAttributedString(string: " ", attributes: typingAttributes)
-        
-        // Adding NSAttributedString cause font changes to system font
-        font = UIFont.boldSystemFont(ofSize: 20)
-        text = ""
-        spellCheckingType = .no
+//        // Shadow
+//        let shadow = NSShadow()
+//        shadow.shadowColor = UIColor.gray
+//        shadow.shadowBlurRadius = 3.0 * frameRatio
+//        
+//        // Text alignment
+//        let paragraphStyle = NSMutableParagraphStyle()
+//        paragraphStyle.alignment = NSTextAlignment.center
+//        
+//        // Create properties
+//        let typingAttributes: [String: AnyObject] = [NSForegroundColorAttributeName: UIColor.white,
+//                                                     NSShadowAttributeName: shadow,
+//                                                     NSParagraphStyleAttributeName:paragraphStyle]
+//        attributedText = NSAttributedString(string: " ", attributes: typingAttributes)
+//        
+//        // Adding NSAttributedString cause font changes to system font
+//        font = UIFont.boldSystemFont(ofSize: 20)
+//        text = ""
         
         // Add padding
         // textContainerInset = UIEdgeInsets.zero
         // textContainer.lineFragmentPadding = 0
         
+        
+        
+        textAlignment = .center
+        spellCheckingType = .no
+        backgroundColor = UIColor.clear
+        textColor = UIColor.white
+        font = UIFont.boldSystemFont(ofSize: 20)
+
+        
         // ** Fix critical bug: Some text is cut a half, since contentSize doesn't update with textContainerInset
         layoutManager.allowsNonContiguousLayout = false
+        
+        viewState = getInitState()
+        updateState(viewState)
         
         for view in subviews {
             view.backgroundColor = UIColor.random
         }
     }
     
-    func updateText(withScale scale: CGFloat) {
-        guard let fontSize = font?.pointSize else { return }
+    func updateState(_ viewState: ViewState) {
+        let oldSize = self.viewState.size
+        self.viewState = viewState
+        
+        frame.size = viewState.size
+        let scale = viewState.size.width / oldSize.width
+        updateText(withScale: scale)
+    }
+    
+    private func updateText(withScale scale: CGFloat) {
+        guard let oldFont = font else { return }
         
         // Container Inset
         var inset = textContainerInset
@@ -76,22 +105,9 @@ class InstaTextView: UITextView {
         // Line Fragment Padding
         textContainer.lineFragmentPadding = textContainer.lineFragmentPadding * scale
         
-        // Shadow
-        let shadow = NSShadow()
-        shadow.shadowColor = UIColor.gray
-        shadow.shadowBlurRadius = 3.0 * frame.width / UIScreen.main.bounds.width
-        
-        // Text alignment
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = NSTextAlignment.center
-        
-        // Create properties
-        let typingAttributes: [String: AnyObject] = [NSForegroundColorAttributeName: UIColor.white,
-                                                     NSShadowAttributeName: shadow,
-                                                     NSParagraphStyleAttributeName: paragraphStyle]
-        
-        attributedText = NSAttributedString(string: text, attributes: typingAttributes)
-        font = UIFont.boldSystemFont(ofSize: fontSize * scale)
+        // Font
+        let newFont = oldFont.withSize(oldFont.pointSize * scale)
+        font = newFont
         text = text
         
         /* if let font = font {

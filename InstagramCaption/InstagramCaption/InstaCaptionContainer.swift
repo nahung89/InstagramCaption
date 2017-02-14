@@ -51,7 +51,6 @@ class InstaCaptionContainer: UIView {
         addSubview(textViewContainer)
         
         textView.frame = textViewContainer.bounds
-        textView.backgroundColor = UIColor.clear
         textView.delegate = self
         textView.configurate()
         textViewContainer.addSubview(textView)
@@ -82,6 +81,7 @@ class InstaCaptionContainer: UIView {
         textView.backgroundColor = UIColor.red
         textViewContainer.alpha = 0.8
         textViewContainer.backgroundColor = UIColor.blue
+        textView.isUserInteractionEnabled = false
     }
 
     fileprivate func getInitState() -> ViewState {
@@ -96,7 +96,10 @@ class InstaCaptionContainer: UIView {
         textViewContainer.center = viewState.center
         textViewContainer.transform = viewState.transform
         textViewContainer.bounds.size = viewState.size
-        textView.frame = textViewContainer.bounds
+        
+        var textState = textView.viewState
+        textState.size = viewState.size
+        textView.updateState(textState)
     }
     
     func updateTextScale(_ scale: CGFloat) {
@@ -113,7 +116,6 @@ class InstaCaptionContainer: UIView {
         // 2
         else {
             viewState.size = CGSize(width: viewState.size.width * scale, height: viewState.size.height * scale)
-            textView.updateText(withScale: scale)
             // print("2")
         }
         
