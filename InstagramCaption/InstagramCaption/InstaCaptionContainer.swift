@@ -22,10 +22,11 @@ class InstaCaptionContainer: UIView {
     fileprivate private(set) var viewState =  ViewState()
     fileprivate var lastViewState = ViewState()
     
-    fileprivate let defaultTextSize = CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height / 2)
+    fileprivate let kTextSize = CGSize(width: UIScreen.main.bounds.width / 2, height: UIScreen.main.bounds.width / 2)
     
     fileprivate struct ViewState {
         var transform = CGAffineTransform.identity
+        var size = CGSize.zero
         var center = CGPoint.zero
     }
     
@@ -44,7 +45,7 @@ class InstaCaptionContainer: UIView {
     
     func configurate() {
         textViewContainer.frame = bounds
-        textViewContainer.bounds.size = defaultTextSize
+        textViewContainer.bounds.size = kTextSize
         textViewContainer.clipsToBounds = false
         textViewContainer.backgroundColor = UIColor.clear
         addSubview(textViewContainer)
@@ -71,8 +72,7 @@ class InstaCaptionContainer: UIView {
         addGestureRecognizer(tapGesture)
         tapGesture.delegate = self
         
-        var viewState = ViewState()
-        viewState.center = CGPoint(x: bounds.width / 2, y: defaultTextSize.height / 2)
+        viewState = getInitState()
         lastViewState = viewState
         updateState(viewState)
         
@@ -84,10 +84,37 @@ class InstaCaptionContainer: UIView {
         textViewContainer.backgroundColor = UIColor.blue
     }
 
+    fileprivate func getInitState() -> ViewState {
+        var viewState = ViewState()
+        viewState.size = kTextSize
+        viewState.center = CGPoint(x: bounds.width / 2, y: bounds.height / 2)
+        return viewState
+    }
+    
     fileprivate func updateState(_ viewState: ViewState) {
         self.viewState = viewState
         textViewContainer.center = viewState.center
         textViewContainer.transform = viewState.transform
+        textViewContainer.bounds.size = viewState.size
+        textView.frame = textViewContainer.bounds
+    }
+    
+    func updateTextScale(_ scale: CGFloat) {
+        var viewState = self.viewState
+        
+        let testA = false
+        
+        // 1
+        if testA {
+            viewState.transform = viewState.transform.scaledBy(x: scale, y: scale)
+        }
+        // 2
+        else {
+            viewState.size = CGSize(width: viewState.size.width * scale, height: viewState.size.height * scale)
+            textView.updateText(withScale: scale)
+        }
+        
+        updateState(viewState)
     }
 }
 
@@ -128,11 +155,10 @@ extension InstaCaptionContainer {
         case .began:
             textView.resignFirstResponder()
         case .changed:
-            var viewState = self.viewState
-            viewState.transform = viewState.transform.scaledBy(x: gesture.scale, y: gesture.scale)
-            updateState(viewState)
+            updateTextScale(gesture.scale)
             gesture.scale = 1
         default:
+            
             break
         }
     }
@@ -163,7 +189,7 @@ extension InstaCaptionContainer: UITextViewDelegate {
         
         var viewState = self.viewState
         lastViewState = viewState
-        viewState.center = CGPoint(x: self.bounds.width / 2, y: defaultTextSize.height / 2)
+        viewState.center = CGPoint(x: self.bounds.width / 2, y: kTextSize.height / 2)
         viewState.transform = CGAffineTransform.identity
         
         UIView.animate(withDuration: 0.5) { [unowned self] in

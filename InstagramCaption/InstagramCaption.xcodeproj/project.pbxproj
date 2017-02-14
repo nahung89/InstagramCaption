@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		11194FB01E51A876002A3502 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11194FAF1E51A875002A3502 /* Helpers.swift */; };
 		119C3D5D1E4EED9F0056FBAA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 119C3D5C1E4EED9F0056FBAA /* AppDelegate.swift */; };
 		119C3D5F1E4EED9F0056FBAA /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 119C3D5E1E4EED9F0056FBAA /* ViewController.swift */; };
 		119C3D621E4EED9F0056FBAA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 119C3D601E4EED9F0056FBAA /* Main.storyboard */; };
@@ -17,6 +18,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		11194FAF1E51A875002A3502 /* Helpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 		119C3D591E4EED9F0056FBAA /* InstagramCaption.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InstagramCaption.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		119C3D5C1E4EED9F0056FBAA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		119C3D5E1E4EED9F0056FBAA /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -62,6 +64,7 @@
 				119C3D5E1E4EED9F0056FBAA /* ViewController.swift */,
 				119C3D6E1E4EEFD30056FBAA /* InstaCaptionContainer.swift */,
 				119C3D701E4EF4090056FBAA /* InstaTextView.swift */,
+				11194FAF1E51A875002A3502 /* Helpers.swift */,
 				119C3D601E4EED9F0056FBAA /* Main.storyboard */,
 				119C3D631E4EED9F0056FBAA /* Assets.xcassets */,
 				119C3D651E4EED9F0056FBAA /* LaunchScreen.storyboard */,
@@ -146,6 +149,7 @@
 				119C3D5F1E4EED9F0056FBAA /* ViewController.swift in Sources */,
 				119C3D711E4EF4090056FBAA /* InstaTextView.swift in Sources */,
 				119C3D5D1E4EED9F0056FBAA /* AppDelegate.swift in Sources */,
+				11194FB01E51A876002A3502 /* Helpers.swift in Sources */,
 				119C3D6F1E4EEFD30056FBAA /* InstaCaptionContainer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -308,6 +312,7 @@
 				119C3D6D1E4EED9F0056FBAA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
