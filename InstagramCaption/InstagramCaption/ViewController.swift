@@ -24,7 +24,7 @@ class ViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        // container.updateTextScale(3)
+        _ = container.becomeFirstResponder()
     }
 
 }

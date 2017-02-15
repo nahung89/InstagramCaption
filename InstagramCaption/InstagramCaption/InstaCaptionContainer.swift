@@ -76,12 +76,16 @@ class InstaCaptionContainer: UIView {
         updateState(viewState)
         
         // *Debug
+//        textView.text = "Hello world and welcome to another new place in the world. Ha ha ha!"
         textView.alpha = 0.8
-        textView.text = "Hello world and welcome to another new place in the world. Ha ha ha!"
         textView.backgroundColor = UIColor.red
         textViewContainer.alpha = 0.8
         textViewContainer.backgroundColor = UIColor.blue
-        textView.isUserInteractionEnabled = false
+        for view in textView.subviews {
+            view.backgroundColor = UIColor.random
+        }
+        
+        textView.updateState(textView.viewState)
     }
 
     fileprivate func getInitState() -> ViewState {
@@ -100,26 +104,6 @@ class InstaCaptionContainer: UIView {
         var textState = textView.viewState
         textState.size = viewState.size
         textView.updateState(textState)
-    }
-    
-    func updateTextScale(_ scale: CGFloat) {
-        var viewState = self.viewState
-        
-        let newWidth = textViewContainer.frame.size.width * scale
-        let shouldTransform = newWidth > UIScreen.main.bounds.width * 2.5 || newWidth < UIScreen.main.bounds.width / 2
-        
-        // 1
-        if shouldTransform {
-            viewState.transform = viewState.transform.scaledBy(x: scale, y: scale)
-            // print("1")
-        }
-        // 2
-        else {
-            viewState.size = CGSize(width: viewState.size.width * scale, height: viewState.size.height * scale)
-            // print("2")
-        }
-        
-        updateState(viewState)
     }
 }
 
@@ -160,7 +144,16 @@ extension InstaCaptionContainer {
         case .began:
             textView.resignFirstResponder()
         case .changed:
-            updateTextScale(gesture.scale)
+            var viewState = self.viewState
+            let newWidth = textViewContainer.frame.size.width * gesture.scale
+            let shouldTransform = newWidth > UIScreen.main.bounds.width * 2 || newWidth < UIScreen.main.bounds.width / 2
+            if shouldTransform {
+                viewState.transform = viewState.transform.scaledBy(x: gesture.scale, y: gesture.scale)
+            }
+            else {
+                viewState.size = CGSize(width: viewState.size.width * gesture.scale, height: viewState.size.height * gesture.scale)
+            }
+            updateState(viewState)
             gesture.scale = 1
         default:
             
@@ -187,27 +180,38 @@ extension InstaCaptionContainer {
 extension InstaCaptionContainer: UITextViewDelegate {
     
     func textViewDidBeginEditing(_ textView: UITextView) {
-        // Trick to display text in center of height (vertical alignment). Must follow step by step
-        textView.bounds.size = textViewContainer.bounds.size
-        textView.clipsToBounds = true
-        textView.isScrollEnabled = true
+        guard let textView = textView as? InstaTextView else { return }
+        
+        // Trick to display full text out of bounds and disable scrolling. Must follow step by step
+        var textState = textView.viewState
+        textState.size = kTextSize
+        textState.clipToBounds = true
+        textView.updateState(textState)
         
         var viewState = self.viewState
         lastViewState = viewState
-        viewState.center = CGPoint(x: self.bounds.width / 2, y: kTextSize.height / 2)
+        viewState.center = CGPoint(x: self.bounds.width / 2, y: kTextSize.height / 2 + 50)
         viewState.transform = CGAffineTransform.identity
+        viewState.size = kTextSize
         
         UIView.animate(withDuration: 0.5) { [unowned self] in
             self.updateState(viewState)
         }
     }
     
+    func textViewDidChange(_ textView: UITextView) {
+        guard let textView = textView as? InstaTextView else { return }
+        textView.updateState(textView.viewState)
+    }
+    
     func textViewDidEndEditing(_ textView: UITextView) {
+        guard let textView = textView as? InstaTextView else { return }
+        
         // Trick to display full text out of bounds and disable scrolling. Must follow step by step
-        let contentSize = textView.contentSize
-        textView.clipsToBounds = false
-        textView.isScrollEnabled = false
-        textView.bounds.size = contentSize
+        var textState = textView.viewState
+        textState.size = lastViewState.size
+        textState.clipToBounds = false
+        textView.updateState(textState)
         
         UIView.animate(withDuration: 0.5) { [unowned self] in
             self.updateState(self.lastViewState)
