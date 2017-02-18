@@ -11,6 +11,11 @@ import UIKit
 
 class InstaCaptionContainer: UIView {
     
+    struct ViewState {
+        var transform = CGAffineTransform.identity
+        var center = CGPoint.zero
+    }
+    
     fileprivate var textViewContainer = UIView()
     fileprivate var textView = InstaTextView()
     
@@ -19,15 +24,20 @@ class InstaCaptionContainer: UIView {
     fileprivate var rotateGesture: UIRotationGestureRecognizer!
     fileprivate var tapGesture: UITapGestureRecognizer!
     
-    fileprivate private(set) var viewState =  ViewState()
-    fileprivate var lastViewState = ViewState()
+    fileprivate private(set) var viewState: ViewState?
+    fileprivate var lastState: ViewState?
     
-    fileprivate let kTextSize = CGSize(width: UIScreen.main.bounds.width / 2, height: UIScreen.main.bounds.width / 2)
+    var defaultSize: CGSize {
+        let width = UIScreen.main.bounds.width
+        return CGSize(width: width * 2, height: width * 2)
+    }
     
-    fileprivate struct ViewState {
-        var transform = CGAffineTransform.identity
-        var size = CGSize.zero
-        var center = CGPoint.zero
+    var defaultCenter: CGPoint {
+        return CGPoint(x: bounds.width / 2, y: bounds.width / 2)
+    }
+    
+    var defaultTransform: CGAffineTransform {
+        return CGAffineTransform.init(scaleX: 0.5, y: 0.5)
     }
     
     override func awakeFromNib() {
@@ -35,6 +45,10 @@ class InstaCaptionContainer: UIView {
         configurate()
     }
     
+    override var isFirstResponder: Bool {
+        return textView.isFirstResponder
+    }
+
     override func becomeFirstResponder() -> Bool {
         return textView.becomeFirstResponder()
     }
@@ -44,16 +58,18 @@ class InstaCaptionContainer: UIView {
     }
     
     func configurate() {
-        textViewContainer.frame = bounds
-        textViewContainer.bounds.size = kTextSize
+        clipsToBounds = false
+        backgroundColor = UIColor.clear
+        
+        textViewContainer.frame.size = defaultSize
         textViewContainer.clipsToBounds = false
         textViewContainer.backgroundColor = UIColor.clear
         addSubview(textViewContainer)
         
         textView.frame = textViewContainer.bounds
-        textView.delegate = self
-        textView.configurate()
         textViewContainer.addSubview(textView)
+        textView.configurate()
+        textView.delegate = self
         
         pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(handlePinGesture(_:)))
         addGestureRecognizer(pinchGesture)
@@ -72,38 +88,32 @@ class InstaCaptionContainer: UIView {
         tapGesture.delegate = self
         
         viewState = getInitState()
-        lastViewState = viewState
         updateState(viewState)
-        
-        // *Debug
-//        textView.text = "Hello world and welcome to another new place in the world. Ha ha ha!"
-        textView.alpha = 0.8
-        textView.backgroundColor = UIColor.red
-        textViewContainer.alpha = 0.8
-        textViewContainer.backgroundColor = UIColor.blue
-        for view in textView.subviews {
-            view.backgroundColor = UIColor.random
-        }
-        
-        textView.updateState(textView.viewState)
+
+        // Debug
+        // backgroundColor = UIColor.red
+        textView.alpha = 0.5
+        textView.backgroundColor = UIColor.blue
+        textViewContainer.alpha = 0.5
+        textViewContainer.backgroundColor = UIColor.green
+//        for view in textView.subviews {
+//            view.alpha = 0.8
+//            view.backgroundColor = UIColor.random
+//        }
     }
 
     fileprivate func getInitState() -> ViewState {
         var viewState = ViewState()
-        viewState.size = kTextSize
-        viewState.center = CGPoint(x: bounds.width / 2, y: bounds.height / 2)
+        viewState.center = defaultCenter
+        viewState.transform = defaultTransform
         return viewState
     }
     
-    fileprivate func updateState(_ viewState: ViewState) {
+    fileprivate func updateState(_ viewState: ViewState?) {
+        guard let viewState = viewState else { return }
         self.viewState = viewState
         textViewContainer.center = viewState.center
         textViewContainer.transform = viewState.transform
-        textViewContainer.bounds.size = viewState.size
-        
-        var textState = textView.viewState
-        textState.size = viewState.size
-        textView.updateState(textState)
     }
 }
 
@@ -124,11 +134,11 @@ extension InstaCaptionContainer {
     }
     
     func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
+        guard var viewState = viewState else { return }
         switch gesture.state {
         case .began:
             textView.resignFirstResponder()
         case .changed:
-            var viewState = self.viewState
             let translation = gesture.translation(in: gesture.view)
             let newCenter = CGPoint(x: viewState.center.x + translation.x, y: viewState.center.y + translation.y)
             viewState.center = newCenter
@@ -140,33 +150,25 @@ extension InstaCaptionContainer {
     }
     
     func handlePinGesture(_ gesture: UIPinchGestureRecognizer) {
+        guard var viewState = viewState else { return }
         switch gesture.state {
         case .began:
             textView.resignFirstResponder()
         case .changed:
-            var viewState = self.viewState
-            let newWidth = textViewContainer.frame.size.width * gesture.scale
-            let shouldTransform = newWidth > UIScreen.main.bounds.width * 2 || newWidth < UIScreen.main.bounds.width / 2
-            if shouldTransform {
-                viewState.transform = viewState.transform.scaledBy(x: gesture.scale, y: gesture.scale)
-            }
-            else {
-                viewState.size = CGSize(width: viewState.size.width * gesture.scale, height: viewState.size.height * gesture.scale)
-            }
+            viewState.transform = viewState.transform.scaledBy(x: gesture.scale, y: gesture.scale)
             updateState(viewState)
             gesture.scale = 1
         default:
-            
             break
         }
     }
     
     func handleRotateGesture(_ gesture: UIRotationGestureRecognizer) {
+        guard var viewState = viewState else { return }
         switch gesture.state {
         case .began:
             textView.resignFirstResponder()
         case .changed:
-            var viewState = self.viewState
             viewState.transform = viewState.transform.rotated(by: gesture.rotation)
             updateState(viewState)
             gesture.rotation = 0
@@ -180,41 +182,24 @@ extension InstaCaptionContainer {
 extension InstaCaptionContainer: UITextViewDelegate {
     
     func textViewDidBeginEditing(_ textView: UITextView) {
-        guard let textView = textView as? InstaTextView else { return }
+        textView.bounds.size = textViewContainer.bounds.size
+        textView.clipsToBounds = true
+        textView.isScrollEnabled = true
         
-        // Trick to display full text out of bounds and disable scrolling. Must follow step by step
-        var textState = textView.viewState
-        textState.size = kTextSize
-        textState.clipToBounds = true
-        textView.updateState(textState)
-        
-        var viewState = self.viewState
-        lastViewState = viewState
-        viewState.center = CGPoint(x: self.bounds.width / 2, y: kTextSize.height / 2 + 50)
-        viewState.transform = CGAffineTransform.identity
-        viewState.size = kTextSize
-        
-        UIView.animate(withDuration: 0.5) { [unowned self] in
-            self.updateState(viewState)
+        lastState = viewState
+        UIView.animate(withDuration: 0.3) { [unowned self] in
+            self.updateState(self.getInitState())
         }
     }
     
-    func textViewDidChange(_ textView: UITextView) {
-        guard let textView = textView as? InstaTextView else { return }
-        textView.updateState(textView.viewState)
-    }
-    
     func textViewDidEndEditing(_ textView: UITextView) {
-        guard let textView = textView as? InstaTextView else { return }
+        let contentSize = textView.contentSize
+        textView.clipsToBounds = false
+        textView.isScrollEnabled = false
+        textView.bounds.size = contentSize
         
-        // Trick to display full text out of bounds and disable scrolling. Must follow step by step
-        var textState = textView.viewState
-        textState.size = lastViewState.size
-        textState.clipToBounds = false
-        textView.updateState(textState)
-        
-        UIView.animate(withDuration: 0.5) { [unowned self] in
-            self.updateState(self.lastViewState)
+        UIView.animate(withDuration: 0.3) { [unowned self] in
+            self.updateState(self.lastState)
         }
     }
 }

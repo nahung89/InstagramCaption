@@ -12,67 +12,37 @@ import UIKit
 class InstaTextView: UITextView {
     
     private let frameRatio: CGFloat = UIScreen.main.bounds.width / 375
-    fileprivate(set) var viewState = ViewState()
-    
-    struct ViewState {
-        var size = CGSize.zero
-        var clipToBounds = false
-    }
-    
-    func getInitState() -> ViewState {
-        return ViewState(size: frame.size, clipToBounds: false)
+
+    // Make text always aligns in vertical
+    override var contentSize: CGSize {
+        didSet {
+            var topCorrection = (bounds.size.height - contentSize.height * zoomScale) / 2.0
+            topCorrection = max(0, topCorrection)
+            contentInset = UIEdgeInsets(top: topCorrection, left: 0, bottom: 0, right: 0)
+        }
     }
     
     func configurate() {
-        font = UIFont.boldSystemFont(ofSize: 20)
+        // Shadow
+        let shadow = NSShadow()
+        shadow.shadowColor = UIColor.gray
+        shadow.shadowBlurRadius = 3.0 * frameRatio
+        let typingAttributes: [String: AnyObject] = [NSShadowAttributeName: shadow]
+        attributedText = NSAttributedString(string: " ", attributes: typingAttributes)
+        
+        
+        // Those properties need to set after attributedText
+        text = ""
+        font = UIFont.boldSystemFont(ofSize: 80)
         textAlignment = .center
         spellCheckingType = .no
         backgroundColor = UIColor.clear
         textColor = UIColor.white
-        isScrollEnabled = true
+        
+        // Add padding
+        let padding = 3.0 * frameRatio
+        textContainerInset = UIEdgeInsets(top: padding, left: padding, bottom: padding, right: padding)
+        // ** Fix critical bug: Some text is cut a half, since contentSize doesn't update with textContainerInset
         layoutManager.allowsNonContiguousLayout = false
-        viewState = getInitState()
-    }
-    
-    func updateState(_ viewState: ViewState) {
-        let oldSize = self.viewState.size
-        self.viewState = viewState
-        
-        if viewState.clipToBounds {
-            frame.size = viewState.size
-            clipsToBounds = viewState.clipToBounds
-        }
-        else {
-            frame.size.width = viewState.size.width
-            frame.size.height = max(viewState.size.height, contentSize.height)
-            clipsToBounds = viewState.clipToBounds
-        }
-        
-        let scale = viewState.size.width / oldSize.width
-        updateText(withScale: scale)
-    }
-    
-    private func updateText(withScale scale: CGFloat) {
-        guard let oldFont = font else { return }
-        
-        // Container Inset
-        textContainerInset = UIEdgeInsets(top: textContainerInset.top * scale,
-                                          left: textContainerInset.left * scale,
-                                          bottom: textContainerInset.bottom * scale,
-                                          right: textContainerInset.right * scale)
-        
-        // Line Fragment Padding
-        textContainer.lineFragmentPadding = textContainer.lineFragmentPadding * scale
-        
-        // Content Inset
-        contentInset = UIEdgeInsets(top: (viewState.size.height - contentSize.height) / 2,
-                                    left: 0,
-                                    bottom: 0,
-                                    right: 0)
-        
-        // Font
-        let newFont = oldFont.withSize(oldFont.pointSize * scale)
-        font = newFont
-        text = text
     }
 }
